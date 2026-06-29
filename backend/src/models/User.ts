@@ -1,4 +1,4 @@
-import mongoose, {Schema, model } from "mongoose";
+import {Schema, model } from "mongoose";
 
 // definimos nuestra interface para el schema de user.
 export interface IUser {
@@ -9,10 +9,10 @@ export interface IUser {
 };
 
 
-const userSchema = new Schema({
+const userSchema = new Schema<IUser>({
     name: {
         type: String,
-        require: true,
+        required: true,
         tirm: true
     },
      email: {
@@ -32,5 +32,5 @@ const userSchema = new Schema({
     }
 });
 
-const User = mongoose.model<IUser>('User', userSchema);
+const User = model<IUser>('User', userSchema);
 export default User ;
