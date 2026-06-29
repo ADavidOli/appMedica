@@ -4,9 +4,7 @@ const router = Router();
 
 // creamos nuestra rutas de admin.
 
-router.get('/', (req, res)=>{
-    res.json('funcionando');
-})
+router.post('/auth/register', )
 
 
 export default router;
