@@ -1,6 +1,6 @@
 import User from "../models/User.js";
 import { CreateUserI } from "../types/user.types.js";
-import { password } from "../utils/bcrypt.js";
+import { Bcrypt } from "../utils/bcrypt.js";
 
 export class UserService {
     // logica para crear usuario
@@ -13,7 +13,7 @@ export class UserService {
         // obtenemos el usuario desde el data
         const user = new User(data);
         // hasheamos la contraseña;
-        user.password = await password.hash(data.password);
+        user.password = await Bcrypt.hash(data.password);
         // guardamos el usuario.
         await user.save();
         return user;

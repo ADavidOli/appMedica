@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 // agregando clase password
-export class password {
+export class Bcrypt {
     // agregando metodo hash para poder hashear el password
     static async hash(password: string) {
         const salt = await bcrypt.genSalt(10);
