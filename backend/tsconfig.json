@@ -9,7 +9,7 @@
 
     "lib": ["ESNext"],
 
-    "strict": true,
+    "strict": false,
     "esModuleInterop": true,
 
     "sourceMap": true,
