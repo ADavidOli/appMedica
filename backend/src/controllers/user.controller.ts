@@ -9,12 +9,14 @@ export class UserController {
         try {
             const body: CreateUserI = req.body;
             const user = await UserService.createUser(body);
-            res.status(201).json(user);
+            res.status(201).json({
+                msg: "usuario creado correctamente",
+            });
         } catch (error) {
             return res.status(409).json({
                 msg: error instanceof Error ? error.message : "Error interno"
             })
 
         }
-    }
+    }   
 }
