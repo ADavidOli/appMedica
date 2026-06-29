@@ -1,19 +1,12 @@
 import {Schema, model } from "mongoose";
-
+import type { User } from "../types/user.types.js";
 // definimos nuestra interface para el schema de user.
-export interface IUser {
-    name: string;
-    email: string;
-    password: string;
-    image: string;
-};
 
-
-const userSchema = new Schema<IUser>({
+const userSchema = new Schema<User>({
     name: {
         type: String,
         required: true,
-        tirm: true
+        trim: true
     },
      email: {
         required: true,
@@ -32,5 +25,5 @@ const userSchema = new Schema<IUser>({
     }
 });
 
-const User = model<IUser>('User', userSchema);
+const User = model<User>('User', userSchema);
 export default User ;

@@ -17,5 +17,11 @@ export class UserService {
         // guardamos el usuario.
         await user.save();
         return user;
-    }
+    };
+
+
+    // // logica para login
+    // static async loginUser(data:){
+
+    // }
 }
