@@ -2,6 +2,11 @@
 import { Router } from "express";
 const router = Router();
 
-// creamos nuestras rutas
+// creamos nuestra rutas de admin.
+
+router.get('/', (req, res)=>{
+    res.json('funcionando');
+})
+
 
 export default router;

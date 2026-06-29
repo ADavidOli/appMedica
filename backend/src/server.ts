@@ -1,16 +1,15 @@
 // aqui arrancamos el servidor
-import dotenv from "dotenv";
+import { env } from "./config/env.js";
 import app from "./app.js";
-
-// configuramos variables de entorno
-dotenv.config();
-const PORT = process.env.APP_PORT || 3000;
+import { conectDB } from "./config/database.js";
 
 // arrancando el servidor.
 async function startServer() {
     try {
-        app.listen(PORT, ()=>{
-            console.log(`Servidor funcionando en el puerto ${PORT}`);
+        // conectamos con nuestro cluster de base de datos.
+        await conectDB();
+        app.listen(env.PORT, ()=>{
+            console.log(`Servidor funcionando en el puerto ${env.PORT}`);
         })
     } catch (error) {
         console.error("error al iniciar el serviror", error)
