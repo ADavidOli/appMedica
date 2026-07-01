@@ -12,4 +12,5 @@ export interface User {
 export type CreateUserI = Pick<User, "name" | "email" | "password">;
 export type LoginUserI = Pick<User, "email" | "password">;
 export type AuthUser = Omit<User, "password" >;
+export type UpdateUser = Omit<User, "password" | "_id" | "image">;
 

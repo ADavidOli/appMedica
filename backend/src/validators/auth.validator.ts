@@ -10,7 +10,8 @@ export class AuthValidator {
 
             body("email")
                 .isEmail()
-                .withMessage("Correo inválido"),
+                .withMessage("Correo inválido")
+                .normalizeEmail(),
 
             body("password")
                 .isLength({ min: 8 })
@@ -24,7 +25,8 @@ export class AuthValidator {
         return [        
             body("email")
                 .isEmail()
-                .withMessage("Correo inválido"),
+                .withMessage("Correo inválido")
+                .normalizeEmail(),
 
             body("password")
                 .notEmpty()
