@@ -13,16 +13,22 @@ export class AuthValidator {
                 .withMessage("Correo inválido")
                 .normalizeEmail(),
 
-            body("password")
-                .isLength({ min: 8 })
-                .withMessage("La contraseña debe tener al menos 8 caracteres"),
+            body("newPassword")
+                .isStrongPassword({
+                    minLength: 8,
+                    minLowercase: 1,
+                    minUppercase: 1,
+                    minNumbers: 1,
+                    minSymbols: 0,
+                })
+                .withMessage("la contraseña debe tener al menos 8 caracteres, un numero, una mayuscula y una minuscula"),
 
             HandleValidationError
         ];
     }
 
     static get Login() {
-        return [        
+        return [
             body("email")
                 .isEmail()
                 .withMessage("Correo inválido")

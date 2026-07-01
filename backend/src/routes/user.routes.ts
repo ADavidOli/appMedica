@@ -11,5 +11,6 @@ const router = Router();
 
 router.get('/profile',authenticate,UserController.getUser);
 router.patch('/profile', authenticate,UserValidator.profile, UserController.updateUser);
+router.patch('/password', authenticate,UserValidator.password, UserController.updatePassword);
 
 export default router;

@@ -1,6 +1,7 @@
 import { Types } from "mongoose";
 import User from "../models/User.model.js";
-import { UpdateUser } from "../types/user.types.js";
+import { PasswordDto, UpdateUser } from "../types/user.types.js";
+import { Bcrypt } from "../utils/bcrypt.js";
 
 export class UserService {
     static async updateProfile(data: UpdateUser, userId: Types.ObjectId) {
@@ -21,6 +22,23 @@ export class UserService {
         user.email = email;
         await user.save();
         return user;
+    }
+    static async updatePassword(data:PasswordDto, userId: Types.ObjectId){
+        const {password, newPassword} = data;
+        const user = await User.findById(userId);
+
+        const isPassword = await Bcrypt.check(password, user.password);
+        if(!isPassword){
+            throw new Error('El password colocado no es el correcto');
+        }
+
+        const isSame = await Bcrypt.check(newPassword, user.password);
+        if(isSame){
+            throw new Error('La nueva contraseña debe ser diferente a la actual');
+        }
+
+        user.password = await Bcrypt.hash(newPassword);
+        await user.save();
     }
 
 }

@@ -8,6 +8,13 @@ export interface User {
     image: string;
 };
 
+export interface PasswordDto {
+    password: string;
+    newPassword: string;
+}
+
+
+
 // utility types 
 export type CreateUserI = Pick<User, "name" | "email" | "password">;
 export type LoginUserI = Pick<User, "email" | "password">;
