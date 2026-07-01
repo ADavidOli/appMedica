@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
 import { env } from "../config/env.js";
-import User from "../models/User.js";
+import User from "../models/User.model.js";
 
 // middleware para saber el token mandado.
 export const authenticate = async(req: Request, res: Response, next: NextFunction) => {

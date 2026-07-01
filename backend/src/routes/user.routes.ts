@@ -1,6 +1,6 @@
 // importamos el router para nuestro routing
 import { Router } from "express";
-import { UserController } from "../controllers/user.controller.js";
+import { UserController } from "../controllers/User.controller.js";
 import { authenticate } from "../middlewares/authenticate.middleware.js";
 
 const router = Router();
