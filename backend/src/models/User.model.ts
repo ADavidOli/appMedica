@@ -22,6 +22,14 @@ const userSchema = new Schema<User>({
     image:{
         type: String,
         default: '',
+    },
+    token:{
+        type: String,
+        default: '',
+    },
+    tokenExpiresAt:{
+        type: Date,
+        default: null
     }
 });
 

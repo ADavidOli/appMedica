@@ -1,7 +1,8 @@
 import User from "../models/User.model.js";
-import { CreateUserI, LoginUserI } from "../types/user.types.js";
+import { CreateUserI, EmailDto, LoginUserI } from "../types/user.types.js";
 import { Bcrypt } from "../utils/bcrypt.js";
 import { generateJWT } from "../utils/jwt.js";
+import crypto from "crypto";
 
 export class AuthService {
     // logica para crear usuario
@@ -35,5 +36,23 @@ export class AuthService {
         const token = generateJWT({id: user.id});
         return token;
 
+    }
+
+    static async sendToken(data:EmailDto){
+        const {email} = data;
+        const user = await User.findOne({email});
+        if(!user){
+            throw new Error('Correo no registrado en el sistema')
+        }
+        // generamos el token
+        const token = crypto.randomBytes(32).toString("hex");
+        // generamos la expiracion.
+        const expires = new Date();
+        expires.setHours(expires.getHours()+1);
+        user.token = token;
+        user.tokenExpiresAt = expires;
+
+        // guardamos.
+        user.save();
     }
 }

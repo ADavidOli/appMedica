@@ -6,6 +6,8 @@ export interface User {
     email: string;
     password: string;
     image: string;
+    token: string;
+    tokenExpiresAt: Date;
 };
 
 export interface PasswordDto {
@@ -13,11 +15,15 @@ export interface PasswordDto {
     newPassword: string;
 }
 
+export interface EmailDto {
+    email: string;
+}
+
 
 
 // utility types 
 export type CreateUserI = Pick<User, "name" | "email" | "password">;
 export type LoginUserI = Pick<User, "email" | "password">;
-export type AuthUser = Omit<User, "password" >;
-export type UpdateUser = Omit<User, "password" | "_id" | "image">;
+// export type AuthUser = Omit<User, "password" >;
+export type UpdateUser = Omit<User, "password" | "_id" | "image" | "token" | "tokenExpiresAt">;
 

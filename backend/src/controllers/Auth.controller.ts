@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { CreateUserI, LoginUserI } from "../types/user.types.js";
+import { CreateUserI, EmailDto, LoginUserI } from "../types/user.types.js";
 import { AuthService } from "../services/auth.service.js";
 
 export class AuthController {
@@ -22,7 +22,7 @@ export class AuthController {
         try {
             const body: LoginUserI = req.body;
             const token = await AuthService.loginUser(body);
-            res.status(201).json({
+            res.status(202).json({
                 token: token,
             })
         } catch (error) {
@@ -31,5 +31,18 @@ export class AuthController {
             })
         }
     }
-   
+    static async forgotpassword(req: Request, res: Response) {
+        try {
+            const body: EmailDto = req.body;
+            await AuthService.sendToken(body);
+            res.status(202).json({
+                msg: "enviamos un correo de recuperacion con tu token"
+            })
+        } catch (error) {
+            return res.status(409).json({
+                msg: error instanceof Error ? error.message : "Error interno"
+            })
+        }
+    }
+
 }

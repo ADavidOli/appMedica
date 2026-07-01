@@ -13,7 +13,7 @@ export class AuthValidator {
                 .withMessage("Correo inválido")
                 .normalizeEmail(),
 
-            body("newPassword")
+            body("password")
                 .isStrongPassword({
                     minLength: 8,
                     minLowercase: 1,
@@ -39,6 +39,14 @@ export class AuthValidator {
                 .withMessage("La contraseña no puede ir vacia"),
 
             HandleValidationError
+        ]
+    }
+    static get email() {
+        return [
+            body("email")
+                .isEmail()
+                .withMessage("Correo inválido")
+                .normalizeEmail(),
         ]
     }
 }
