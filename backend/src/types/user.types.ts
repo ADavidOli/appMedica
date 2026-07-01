@@ -8,7 +8,8 @@ export interface User {
     image: string;
 };
 
-export type CreateUserI = Pick<User, "name"| "email" | "password">;
-export type LoginUserI = Pick<User,  "email" | "password">;
-
+// utility types 
+export type CreateUserI = Pick<User, "name" | "email" | "password">;
+export type LoginUserI = Pick<User, "email" | "password">;
+export type AuthUser = Omit<User, "password" >;
 

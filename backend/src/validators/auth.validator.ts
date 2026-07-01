@@ -2,7 +2,7 @@ import { body } from "express-validator";
 import { HandleValidationError } from "../middlewares/validation.middleware.js";
 
 export class AuthValidator {
-    static  get register(){
+    static get register() {
         return [
             body("name")
                 .notEmpty()
@@ -18,5 +18,19 @@ export class AuthValidator {
 
             HandleValidationError
         ];
+    }
+
+    static get Login() {
+        return [        
+            body("email")
+                .isEmail()
+                .withMessage("Correo inválido"),
+
+            body("password")
+                .notEmpty()
+                .withMessage("La contraseña no puede ir vacia"),
+
+            HandleValidationError
+        ]
     }
 }

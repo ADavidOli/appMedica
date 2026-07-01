@@ -1,6 +1,7 @@
 import User from "../models/User.js";
-import { CreateUserI } from "../types/user.types.js";
+import { CreateUserI, LoginUserI } from "../types/user.types.js";
 import { Bcrypt } from "../utils/bcrypt.js";
+import { generateJWT } from "../utils/jwt.js";
 
 export class UserService {
     // logica para crear usuario
@@ -20,8 +21,19 @@ export class UserService {
     };
 
 
-    // // logica para login
-    // static async loginUser(data:){
+    // logica para login
+    static async loginUser(data:LoginUserI){
+        const user = await User.findOne({email: data.email});
+        if(!user){
+            throw new Error("Cuenta no registrada");
+        }
+        // comprobando nuestro password
+        const passwordCorrect = await Bcrypt.check(data.password, user.password);
+        if(!passwordCorrect){
+            throw new Error("password incorrecto");
+        }
+        const token = generateJWT({id: user.id});
+        return token;
 
-    // }
+    }
 }

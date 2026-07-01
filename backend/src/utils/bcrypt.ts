@@ -6,4 +6,8 @@ export class Bcrypt {
         const salt = await bcrypt.genSalt(10);
         return await bcrypt.hash(password, salt)
     };
+
+    static async check(password: string, hash: string){
+          return await bcrypt.compare(password, hash);
+    }
 }
