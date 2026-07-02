@@ -10,6 +10,8 @@ export const env = {
     MAIL_USER: process.env.MAIL_USER ?? '',
     MAIL_PASSWORD: process.env.MAIL_PASSWORD ?? '',
     MAIL_FROM: process.env.MAIL_FROM ?? '',
+    RESEND_API_KEY: process.env.RESEND_API_KEY ?? '',
+    FRONTEND_URL: process.env.FRONTEND_URL ?? '',
 
 };
 
@@ -24,4 +26,12 @@ if (!env.JWT_SECRET) {
 
 if(!env.MAIL_HOST || !env.MAIL_PORT || !env.MAIL_USER || !env.MAIL_PASSWORD || !env.MAIL_FROM){
     throw new Error('error con las variables SMTP')
+}
+
+if(!env.RESEND_API_KEY){
+    throw new Error('no se ha definido una key para resend');
+}
+
+if(!env.FRONTEND_URL){
+    throw new Error('ninguna url del frontend seleccionada')
 }

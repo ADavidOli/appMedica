@@ -1,4 +1,4 @@
-import { sendResetPasswordByEmail } from "../mails/auth.mail.js";
+import { sendEmailByResend, sendResetPasswordByEmail } from "../mails/auth.mail.js";
 import User from "../models/User.model.js";
 import { CreateUserI, EmailDto, LoginUserI } from "../types/user.types.js";
 import { Bcrypt } from "../utils/bcrypt.js";
@@ -55,11 +55,18 @@ export class AuthService {
 
         // guardamos.
         await user.save();
-
+        // forma de enviar correos via google.smtp, los servidores gratuitos configurar con las iplist
         await sendResetPasswordByEmail({
             name: user.name,
             email: user.email,
             token: user.token
         });
+
+        // enviar via resend->solo configurar con un dominio propio desde resend
+        // await sendEmailByResend({
+        //     name: user.name,
+        //     email: user.email,
+        //     token: user.token
+        // });
     }
 }
