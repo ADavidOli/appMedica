@@ -29,6 +29,9 @@ export type tokenDto = {
     token: string;
 };
 
+export type passwordDto ={
+    password: string
+}
 
 // utility types 
 export type CreateUserI = Pick<User, "name" | "email" | "password">;

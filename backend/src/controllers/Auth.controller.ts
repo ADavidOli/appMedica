@@ -1,7 +1,7 @@
 import type { Response } from "express";
-import { CreateUserI, EmailDto, LoginUserI, tokenDto } from "../types/user.types.js";
+import { CreateUserI, EmailDto, LoginUserI, passwordDto, tokenDto } from "../types/user.types.js";
 import { AuthService } from "../services/auth.service.js";
-import { Body, Params } from "../types/reques.types.js";
+import { Body, Params, Req } from "../types/reques.types.js";
 
 export class AuthController {
     // controller para crear usuario
@@ -52,8 +52,8 @@ export class AuthController {
 
     static async validateToken(req: Params<tokenDto>, res: Response) {
         try {
-            const token = req.params.token;
-            await AuthService.validateToken(token);
+            const {token} = req.params;
+            await AuthService.validateToken({token});
             res.status(202).json({
                 msg: "token valido"
             })
@@ -64,10 +64,14 @@ export class AuthController {
         }
     }
 
-    static async resetPassword(req:Params<tokenDto>, res: Response) {
+    static async resetPassword(req:Req<tokenDto,passwordDto>, res: Response) {
         try {
-            const token = req.params.token;
-            console.log('desde reset');
+            const {token} = req.params;
+            const {password} = req.body;
+            await AuthService.resetPassword({token}, {password});
+            res.status(202).json({
+                msg:"contraseña cambiada correctamente"
+            })
         } catch (error) {
             return res.status(409).json({
                 msg: error instanceof Error ? error.message : "Error interno"

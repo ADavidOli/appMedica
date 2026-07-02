@@ -49,4 +49,17 @@ export class AuthValidator {
                 .normalizeEmail(),
         ]
     }
+
+    static get password(){
+        return[
+            body("password").isStrongPassword({
+                minLength: 8,
+                minUppercase: 1,
+                minLowercase: 1,
+                minNumbers: 1,
+                minSymbols: 0
+            }).withMessage("la contraseña debe tener al menos 8 caracteres, un numero, una mayuscula y una minuscula"),
+            HandleValidationError
+        ]
+    }
 }

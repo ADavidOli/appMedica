@@ -1,6 +1,6 @@
 import { sendEmailByResend, sendResetPasswordByEmail } from "../mails/auth.mail.js";
 import User from "../models/User.model.js";
-import { CreateUserI, EmailDto, LoginUserI} from "../types/user.types.js";
+import { CreateUserI, EmailDto, LoginUserI, passwordDto, tokenDto} from "../types/user.types.js";
 import { Bcrypt } from "../utils/bcrypt.js";
 import { generateJWT } from "../utils/jwt.js";
 import crypto from "crypto";
@@ -70,7 +70,32 @@ export class AuthService {
         // });
     }
 
-    static async validateToken(token: string){
-        console.log(token);
+    static async validateToken(data: tokenDto){
+        const {token} = data
+        const user = await User.findOne({token});
+        if(!user){
+            throw new Error('token no valido');
+        };
+
+        // validamos la expiracion.
+        const now = new Date();
+        const expires = new Date(user.tokenExpiresAt);
+
+        if(now >= expires){
+            throw new Error('token ya expirado');
+        };
+        return user;
     }
+
+    static async resetPassword(token: tokenDto, data: passwordDto){
+        const {password} = data;
+        const user = await this.validateToken(token);
+        user.password = await Bcrypt.hash(password);
+        user.token = "";
+        user.tokenExpiresAt = null;
+
+        await user.save();
+    }
+
+
 }
