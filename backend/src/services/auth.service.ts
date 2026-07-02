@@ -1,9 +1,9 @@
-import { sendEmailByResend, sendResetPasswordByEmail, sendTokenVerify } from "../mails/auth.mail.js";
+import { sendResetPasswordByEmail, sendTokenVerify } from "../mails/auth.mail.js";
 import User from "../models/User.model.js";
 import { CreateUserI, EmailDto, LoginUserI, passwordDto, tokenDto } from "../types/user.types.js";
 import { Bcrypt } from "../utils/bcrypt.js";
 import { generateJWT } from "../utils/jwt.js";
-import crypto from "crypto";
+import { generateToken } from "../utils/token.js";
 
 export class AuthService {
     // logica para crear usuario
@@ -19,9 +19,8 @@ export class AuthService {
         user.password = await Bcrypt.hash(data.password);
 
         // generamos el token.
-        user.token = crypto.randomBytes(32).toString("hex");
-        const expires = new Date();
-        expires.setHours(expires.getHours() + 1);
+        const { token, expires } = generateToken();
+        user.token = token
         user.tokenExpiresAt = expires;
 
         // guardamos el usuario.
@@ -37,7 +36,7 @@ export class AuthService {
         return user;
     };
 
-    static async validateEmail(data: tokenDto){
+    static async validateEmail(data: tokenDto) {
         const user = await this.validateToken(data);
         user.token = "";
         user.tokenExpiresAt = null;
@@ -52,6 +51,10 @@ export class AuthService {
         if (!user) {
             throw new Error("Cuenta no registrada");
         }
+        if (!user.confirmed) {
+            throw new Error('Cuenta no confirmada por el token')
+        }
+
         // comprobando nuestro password
         const passwordCorrect = await Bcrypt.check(data.password, user.password);
         if (!passwordCorrect) {
@@ -69,12 +72,10 @@ export class AuthService {
             throw new Error('Correo no registrado en el sistema')
         }
         // generamos el token
-        const token = crypto.randomBytes(32).toString("hex");
-        // generamos la expiracion.
-        const expires = new Date();
-        expires.setHours(expires.getHours() + 1);
-        user.token = token;
+        const { token, expires } = generateToken();
+        user.token = token
         user.tokenExpiresAt = expires;
+       
 
         // guardamos.
         await user.save();

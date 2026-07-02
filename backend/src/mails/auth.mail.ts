@@ -2,49 +2,40 @@ import { env } from "../config/env.js";
 import { SendEmailDTO } from "../types/user.types.js";
 import { transporter } from "../config/mail.js";
 import { resend } from "../config/resend.js";
+import { resetPasswordTemplate } from "./templates/reset-password.template.js";
+import { verifyEmailTemplate } from "./templates/verify-email.template.js";
 
 
 export const sendResetPasswordByEmail = async (data: SendEmailDTO) => {
-    // primero creamos el objeto.
-    const emailOptions = {
+
+    await transporter.sendMail({
         from: env.MAIL_FROM,
         to: data.email,
-        subject: "Recuperacion de la contraseña - AppMedica",
-        text: `
-            Hola ${data.name},
+        subject: "Recuperación de contraseña - AppMedica",
 
+        text: `
+            Hola ${data.name}
             Recibimos una solicitud para cambiar tu contraseña.
 
-            Puedes hacerlo desde el siguiente enlace:
+            ${env.FRONTEND_URL}/reset-password/${data.token}
+        `,
+        html: resetPasswordTemplate(data)
+    });
 
-            http://localhost:5173/reset-password/${data.token}
-
-            Si no solicitaste este cambio, ignora este correo.
-
-            -Equipo AppMedica.
-            `,
-    };
-    // mandamos el email con las opciones creadas en el objeto es await
-    await transporter.sendMail(emailOptions);
 }
 
-export const sendTokenVerify = async (data: SendEmailDTO)=>{
+export const sendTokenVerify = async (data: SendEmailDTO) => {
 
     const emailOptions = {
         from: env.MAIL_FROM,
         to: data.email,
         subject: "Bienvenido - AppMedica",
         text: `
-            Hola ${data.name},
-            Verifica tu correo electronico en el siguiente enlace
-            y preparate para gestionar tu toma de medicamentos.
-            Gracias por utilizar AppMedica
-
-            http://localhost:5173/verify-email/${data.token}
-
-            Si no solicitaste este cambio, has caso omiso.
-            -Equipo AppMedica.
-            `,
+            Hola ${data.name},Gracias por usar App-medica,
+            tu asistente en el recordatorio para medicamentos.
+            verifica tu email en el siguiente enlace
+            ${env.FRONTEND_URL}/verify-email/${data.token}`,
+        html: verifyEmailTemplate(data)
     }
     await transporter.sendMail(emailOptions);
 }
