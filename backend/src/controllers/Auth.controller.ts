@@ -1,13 +1,14 @@
-import { Request, Response } from "express";
-import { CreateUserI, EmailDto, LoginUserI } from "../types/user.types.js";
+import type { Response } from "express";
+import { CreateUserI, EmailDto, LoginUserI, tokenDto } from "../types/user.types.js";
 import { AuthService } from "../services/auth.service.js";
+import { Body, Params } from "../types/reques.types.js";
 
 export class AuthController {
     // controller para crear usuario
-    static async create(req: Request, res: Response) {
+    static async create(req: Body<CreateUserI>, res: Response) {
         try {
-            const body: CreateUserI = req.body;
-            await AuthService.createUser(body);
+            const { name, email, password } = req.body;
+            await AuthService.createUser({ name, email, password });
             res.status(201).json({
                 msg: "usuario creado correctamente",
             });
@@ -18,10 +19,10 @@ export class AuthController {
 
         }
     };
-    static async login(req: Request, res: Response) {
+    static async login(req: Body<LoginUserI>, res: Response) {
         try {
-            const body: LoginUserI = req.body;
-            const token = await AuthService.loginUser(body);
+            const { email, password } = req.body;
+            const token = await AuthService.loginUser({ email, password });
             res.status(202).json({
                 token: token,
             })
@@ -31,13 +32,42 @@ export class AuthController {
             })
         }
     }
-    static async forgotpassword(req: Request, res: Response) {
+
+    // tipar los request
+    // Request<{Params}, {ResBody}, {ReqBody}, {Query}> express ocupa este orden para tipar
+    //  Query<T> = Request<{}, {}, {}, T>;
+    static async forgotpassword(req: Body<EmailDto>, res: Response) {
         try {
-            const body: EmailDto = req.body;
-            await AuthService.sendToken(body);
+            const { email } = req.body;
+            await AuthService.sendToken({ email });
             res.status(202).json({
-                msg: "enviamos un correo de recuperacion con tu token"
+                msg: "enviamos un correo de recuperacion"
             })
+        } catch (error) {
+            return res.status(409).json({
+                msg: error instanceof Error ? error.message : "Error interno"
+            })
+        }
+    }
+
+    static async validateToken(req: Params<tokenDto>, res: Response) {
+        try {
+            const token = req.params.token;
+            await AuthService.validateToken(token);
+            res.status(202).json({
+                msg: "token valido"
+            })
+        } catch (error) {
+            return res.status(409).json({
+                msg: error instanceof Error ? error.message : "Error interno"
+            });
+        }
+    }
+
+    static async resetPassword(req:Params<tokenDto>, res: Response) {
+        try {
+            const token = req.params.token;
+            console.log('desde reset');
         } catch (error) {
             return res.status(409).json({
                 msg: error instanceof Error ? error.message : "Error interno"

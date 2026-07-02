@@ -25,6 +25,9 @@ export interface SendResetPasswordDTO {
     token: string
 }
 
+export type tokenDto = {
+    token: string;
+};
 
 
 // utility types 

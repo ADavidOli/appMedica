@@ -1,6 +1,6 @@
 import { sendEmailByResend, sendResetPasswordByEmail } from "../mails/auth.mail.js";
 import User from "../models/User.model.js";
-import { CreateUserI, EmailDto, LoginUserI } from "../types/user.types.js";
+import { CreateUserI, EmailDto, LoginUserI} from "../types/user.types.js";
 import { Bcrypt } from "../utils/bcrypt.js";
 import { generateJWT } from "../utils/jwt.js";
 import crypto from "crypto";
@@ -68,5 +68,9 @@ export class AuthService {
         //     email: user.email,
         //     token: user.token
         // });
+    }
+
+    static async validateToken(token: string){
+        console.log(token);
     }
 }

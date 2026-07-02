@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { UserService } from "../services/user.service.js";
 import { PasswordDto, UpdateUser } from "../types/user.types.js";
 import { Types } from "mongoose";
+import { Body } from "../types/reques.types.js";
 
 export class UserController {
     // controller para crear usuario
@@ -14,11 +15,11 @@ export class UserController {
             })
         }
     }
-    static async updateUser(req: Request, res: Response) {
+    static async updateUser(req: Body<UpdateUser> , res: Response) {
         try {
-            const body: UpdateUser = req.body;
+            const {name, email} = req.body;
             const userId: Types.ObjectId = req.user._id;
-            const user = await UserService.updateProfile(body, userId);
+            const user = await UserService.updateProfile({name, email}, userId);
             res.status(200).json({
                 msg: "usuario actualizado correctamente",
                 user
@@ -30,11 +31,11 @@ export class UserController {
         }
     }
 
-    static async updatePassword(req: Request, res: Response) {
+    static async updatePassword(req:Body<PasswordDto>, res: Response) {
         try {
-            const body : PasswordDto = req.body;
+            const {password, newPassword} = req.body;
             const userId: Types.ObjectId = req.user._id;
-            await UserService.updatePassword(body, userId);
+            await UserService.updatePassword({password, newPassword}, userId);
             res.status(200).json({
                 msg: "password modificado correctamente"
             })
