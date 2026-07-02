@@ -8,6 +8,7 @@ export interface User {
     image: string;
     token: string;
     tokenExpiresAt: Date;
+    confirmed: boolean
 };
 
 export interface PasswordDto {
@@ -19,7 +20,7 @@ export interface EmailDto {
     email: string;
 }
 
-export interface SendResetPasswordDTO {
+export interface SendEmailDTO {
     name: string,
     email: string,
     token: string

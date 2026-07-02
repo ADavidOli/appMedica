@@ -1,6 +1,6 @@
-import { sendEmailByResend, sendResetPasswordByEmail } from "../mails/auth.mail.js";
+import { sendEmailByResend, sendResetPasswordByEmail, sendTokenVerify } from "../mails/auth.mail.js";
 import User from "../models/User.model.js";
-import { CreateUserI, EmailDto, LoginUserI, passwordDto, tokenDto} from "../types/user.types.js";
+import { CreateUserI, EmailDto, LoginUserI, passwordDto, tokenDto } from "../types/user.types.js";
 import { Bcrypt } from "../utils/bcrypt.js";
 import { generateJWT } from "../utils/jwt.js";
 import crypto from "crypto";
@@ -11,45 +11,68 @@ export class AuthService {
         const userExist = await User.exists({ email: data.email });
         // validamos si no existe
         if (userExist) {
-           throw new Error("El correo ya está registrado"); 
+            throw new Error("El correo ya está registrado");
         }
         // obtenemos el usuario desde el data
         const user = new User(data);
         // hasheamos la contraseña;
         user.password = await Bcrypt.hash(data.password);
+
+        // generamos el token.
+        user.token = crypto.randomBytes(32).toString("hex");
+        const expires = new Date();
+        expires.setHours(expires.getHours() + 1);
+        user.tokenExpiresAt = expires;
+
         // guardamos el usuario.
         await user.save();
+
+        // mandamos el correo
+        await sendTokenVerify({
+            name: user.name,
+            email: user.email,
+            token: user.token
+        });
+
         return user;
     };
 
+    static async validateEmail(data: tokenDto){
+        const user = await this.validateToken(data);
+        user.token = "";
+        user.tokenExpiresAt = null;
+        user.confirmed = true;
+        await user.save();
+    }
+
 
     // logica para login
-    static async loginUser(data:LoginUserI){
-        const user = await User.findOne({email: data.email});
-        if(!user){
+    static async loginUser(data: LoginUserI) {
+        const user = await User.findOne({ email: data.email });
+        if (!user) {
             throw new Error("Cuenta no registrada");
         }
         // comprobando nuestro password
         const passwordCorrect = await Bcrypt.check(data.password, user.password);
-        if(!passwordCorrect){
+        if (!passwordCorrect) {
             throw new Error("password incorrecto");
         }
-        const token = generateJWT({id: user.id});
+        const token = generateJWT({ id: user.id });
         return token;
 
     }
 
-    static async sendToken(data:EmailDto){
-        const {email} = data;
-        const user = await User.findOne({email});
-        if(!user){
+    static async sendToken(data: EmailDto) {
+        const { email } = data;
+        const user = await User.findOne({ email });
+        if (!user) {
             throw new Error('Correo no registrado en el sistema')
         }
         // generamos el token
         const token = crypto.randomBytes(32).toString("hex");
         // generamos la expiracion.
         const expires = new Date();
-        expires.setHours(expires.getHours()+1);
+        expires.setHours(expires.getHours() + 1);
         user.token = token;
         user.tokenExpiresAt = expires;
 
@@ -70,10 +93,10 @@ export class AuthService {
         // });
     }
 
-    static async validateToken(data: tokenDto){
-        const {token} = data
-        const user = await User.findOne({token});
-        if(!user){
+    static async validateToken(data: tokenDto) {
+        const { token } = data
+        const user = await User.findOne({ token });
+        if (!user) {
             throw new Error('token no valido');
         };
 
@@ -81,14 +104,14 @@ export class AuthService {
         const now = new Date();
         const expires = new Date(user.tokenExpiresAt);
 
-        if(now >= expires){
+        if (now >= expires) {
             throw new Error('token ya expirado');
         };
         return user;
     }
 
-    static async resetPassword(token: tokenDto, data: passwordDto){
-        const {password} = data;
+    static async resetPassword(token: tokenDto, data: passwordDto) {
+        const { password } = data;
         const user = await this.validateToken(token);
         user.password = await Bcrypt.hash(password);
         user.token = "";

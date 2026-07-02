@@ -6,6 +6,7 @@ const router = Router();
 
 
 router.post('/register', AuthValidator.register,AuthController.create);
+router.get('/verify-email/:token',AuthController.verifyEmail);
 router.post('/login',AuthValidator.Login,AuthController.login);
 router.post('/forgot-password',AuthValidator.email, AuthController.forgotpassword);
 router.get('/reset-password/:token', AuthController.validateToken);

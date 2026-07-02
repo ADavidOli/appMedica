@@ -30,6 +30,10 @@ const userSchema = new Schema<User>({
     tokenExpiresAt:{
         type: Date,
         default: null
+    },
+    confirmed:{
+        type: Boolean,
+        default: false
     }
 });
 

@@ -1,10 +1,10 @@
 import { env } from "../config/env.js";
-import { SendResetPasswordDTO } from "../types/user.types.js";
+import { SendEmailDTO } from "../types/user.types.js";
 import { transporter } from "../config/mail.js";
 import { resend } from "../config/resend.js";
 
 
-export const sendResetPasswordByEmail = async (data: SendResetPasswordDTO) => {
+export const sendResetPasswordByEmail = async (data: SendEmailDTO) => {
     // primero creamos el objeto.
     const emailOptions = {
         from: env.MAIL_FROM,
@@ -28,7 +28,36 @@ export const sendResetPasswordByEmail = async (data: SendResetPasswordDTO) => {
     await transporter.sendMail(emailOptions);
 }
 
-export const sendEmailByResend = async (correo: SendResetPasswordDTO) => {
+export const sendTokenVerify = async (data: SendEmailDTO)=>{
+
+    const emailOptions = {
+        from: env.MAIL_FROM,
+        to: data.email,
+        subject: "Bienvenido - AppMedica",
+        text: `
+            Hola ${data.name},
+            Verifica tu correo electronico en el siguiente enlace
+            y preparate para gestionar tu toma de medicamentos.
+            Gracias por utilizar AppMedica
+
+            http://localhost:5173/verify-email/${data.token}
+
+            Si no solicitaste este cambio, has caso omiso.
+            -Equipo AppMedica.
+            `,
+    }
+    await transporter.sendMail(emailOptions);
+}
+
+
+
+
+
+
+
+// Resend******
+
+export const sendEmailByResend = async (correo: SendEmailDTO) => {
     // se puede enviar a otros correos siempre y cuando se tenga un dominio y se registre a ese dominio en resend
     const { data, error } = await resend.emails.send({
         from: "App Medica <onboarding@resend.dev>",
@@ -43,7 +72,7 @@ export const sendEmailByResend = async (correo: SendResetPasswordDTO) => {
             -Equipo AppMedica.
             </p>
         `,
-    
+
     });
     // forma de validar errores con resend
     if (error) {

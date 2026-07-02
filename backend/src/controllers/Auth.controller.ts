@@ -11,12 +11,27 @@ export class AuthController {
             await AuthService.createUser({ name, email, password });
             res.status(201).json({
                 msg: "usuario creado correctamente",
+                reminder: "mandados un correo de verificacion al correo de ingreso"
             });
         } catch (error) {
             return res.status(409).json({
                 msg: error instanceof Error ? error.message : "Error interno"
             })
 
+        }
+    };
+
+    static async verifyEmail(req:Params<tokenDto> ,res:Response){
+        try {
+            const {token} = req.params;
+            await AuthService.validateEmail({token});
+            res.status(202).json({
+                msg: "email verificado exitosamente, ¡ya puedes utilizar AppMedica!"
+            })
+        } catch (error) {
+            return res.status(409).json({
+                msg: error instanceof Error ? error.message : "Error interno"
+            });
         }
     };
     static async login(req: Body<LoginUserI>, res: Response) {
