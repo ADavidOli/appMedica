@@ -1,3 +1,4 @@
+import { sendResetPasswordByEmail } from "../mails/auth.mail.js";
 import User from "../models/User.model.js";
 import { CreateUserI, EmailDto, LoginUserI } from "../types/user.types.js";
 import { Bcrypt } from "../utils/bcrypt.js";
@@ -53,6 +54,12 @@ export class AuthService {
         user.tokenExpiresAt = expires;
 
         // guardamos.
-        user.save();
+        await user.save();
+
+        await sendResetPasswordByEmail({
+            name: user.name,
+            email: user.email,
+            token: user.token
+        });
     }
 }

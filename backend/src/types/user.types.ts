@@ -19,6 +19,12 @@ export interface EmailDto {
     email: string;
 }
 
+export interface SendResetPasswordDTO {
+    name: string,
+    email: string,
+    token: string
+}
+
 
 
 // utility types 
